@@ -34,7 +34,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         },
       );
 
-      print('Response Data: ${response.data}');
+      // print('Response Data: ${response.data}');
 
       if (response.statusCode == 200 && response.data['access_token'] != null) {
         state = state.copyWith(

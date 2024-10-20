@@ -3,28 +3,27 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'auth_provider.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-
-  @override
-  HomeScreenState createState() => HomeScreenState();
-}
-
-class HomeScreenState extends State<HomeScreen> {
+class HomeScreen extends ConsumerWidget {
   final CarouselSliderController _carouselController =
       CarouselSliderController();
   final CarouselSliderController _footerCarouselController =
       CarouselSliderController();
-  int _currentPromoIndex = 0;
-  int _currentFooterIndex = 0;
+
+  int currentPromoIndex = 0;
+  int currentFooterIndex = 0;
+
+  HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authProvider);
+    final authNotifier = ref.read(authProvider.notifier);
+
     // List of promotional and footer banners
     final List<String> promoBanners = [
       'assets/images/ace.jpg',
       'assets/images/Axlovir.jpg',
-      'assets/images/Bevicort.jpg'
+      'assets/images/Bevicort.jpg',
     ];
 
     final List<String> footerBanners = [
@@ -33,14 +32,12 @@ class HomeScreenState extends State<HomeScreen> {
       'assets/images/DIBENOL.jpg',
     ];
 
-    // Promotional URLs
+    // Promotional and footer URLs
     final List<String> promoLinks = [
       'https://promo-site-1.com',
       'https://promo-site-2.com',
       'https://promo-site-3.com',
     ];
-
-    // Footer URLs
     final List<String> footerLinks = [
       'https://footer-site-1.com',
       'https://footer-site-2.com',
@@ -63,19 +60,25 @@ class HomeScreenState extends State<HomeScreen> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            const UserAccountsDrawerHeader(
-              accountName: Text('Logged in'),
-              accountEmail: Text('Welcome'),
-              currentAccountPicture: CircleAvatar(
+            UserAccountsDrawerHeader(
+              accountName:
+                  Text(authState.isAuthenticated ? 'Logged in' : 'Guest'),
+              accountEmail:
+                  Text(authState.isAuthenticated ? 'Welcome' : 'Please Login'),
+              currentAccountPicture: const CircleAvatar(
                 backgroundColor: Colors.white,
                 child: Icon(Icons.person, size: 50, color: Colors.green),
               ),
             ),
             ListTile(
               leading: const Icon(Icons.login),
-              title: const Text('Logout'),
-              onTap: () {
-                // Handle Logout
+              title: Text(authState.isAuthenticated ? 'Logout' : 'Login'),
+              onTap: () async {
+                if (authState.isAuthenticated) {
+                  authNotifier.logout();
+                } else {
+                  await _showLoginDialog(context, authNotifier);
+                }
               },
             ),
           ],
@@ -87,12 +90,10 @@ class HomeScreenState extends State<HomeScreen> {
             // Promotional Banner with Carousel
             _buildCarouselWithDots(
               images: promoBanners,
-              currentIndex: _currentPromoIndex,
+              currentIndex: currentPromoIndex,
               carouselController: _carouselController,
               onPageChanged: (index) {
-                setState(() {
-                  _currentPromoIndex = index;
-                });
+                currentPromoIndex = index;
               },
               links: promoLinks,
             ),
@@ -104,14 +105,16 @@ class HomeScreenState extends State<HomeScreen> {
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
                 children: [
-                  _buildGridItem('ডাক্তার খুঁজুন', Icons.search),
-                  _buildGridItem('ফলোআপ', Icons.update),
-                  _buildGridItem('অ্যাপয়েন্টমেন্ট', Icons.calendar_today),
-                  _buildGridItem('প্রেসক্রিপশন', Icons.medication),
-                  _buildGridItem('আমার ডাক্তার', Icons.person),
-                  _buildGridItem('হেলথ চেক-আপ', Icons.health_and_safety),
-                  _buildGridItem('হোম টেস্ট', Icons.home),
-                  _buildGridItem('ইন্স্যুরেন্স', Icons.shield),
+                  _buildGridItem('ডাক্তার খুঁজুন', Icons.search, context),
+                  _buildGridItem('ফলোআপ', Icons.update, context),
+                  _buildGridItem(
+                      'অ্যাপয়েন্টমেন্ট', Icons.calendar_today, context),
+                  _buildGridItem('প্রেসক্রিপশন', Icons.medication, context),
+                  _buildGridItem('আমার ডাক্তার', Icons.person, context),
+                  _buildGridItem(
+                      'হেলথ চেক-আপ', Icons.health_and_safety, context),
+                  _buildGridItem('হোম টেস্ট', Icons.home, context),
+                  _buildGridItem('ইন্স্যুরেন্স', Icons.shield, context),
                 ],
               ),
             ),
@@ -131,26 +134,26 @@ class HomeScreenState extends State<HomeScreen> {
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
                 children: [
-                  _buildGridItem('জেনারেল প্র্যাকটিস...', Icons.local_hospital),
-                  _buildGridItem('জন্ডিস, হেপাটাইট...', Icons.person),
-                  _buildGridItem('স্ত্রী ও প্রসূতি', Icons.pregnant_woman),
-                  _buildGridItem('অর্থোপেডিক', Icons.healing),
-                  _buildGridItem('ডায়াবেটোলজি', Icons.bloodtype),
-                  _buildGridItem('খাদ্য ও পুষ্টি', Icons.food_bank),
-                  _buildGridItem('নাক, কান ও গলা', Icons.person_2),
-                  _buildGridItem('হৃদরোগ', Icons.favorite),
+                  _buildGridItem(
+                      'জেনারেল প্র্যাকটিস...', Icons.local_hospital, context),
+                  _buildGridItem('জন্ডিস, হেপাটাইট...', Icons.person, context),
+                  _buildGridItem(
+                      'স্ত্রী ও প্রসূতি', Icons.pregnant_woman, context),
+                  _buildGridItem('অর্থোপেডিক', Icons.healing, context),
+                  _buildGridItem('ডায়াবেটোলজি', Icons.bloodtype, context),
+                  _buildGridItem('খাদ্য ও পুষ্টি', Icons.food_bank, context),
+                  _buildGridItem('নাক, কান ও গলা', Icons.person_2, context),
+                  _buildGridItem('হৃদরোগ', Icons.favorite, context),
                 ],
               ),
             ),
             // Footer Banner with Carousel
             _buildCarouselWithDots(
               images: footerBanners,
-              currentIndex: _currentFooterIndex,
+              currentIndex: currentFooterIndex,
               carouselController: _footerCarouselController,
               onPageChanged: (index) {
-                setState(() {
-                  _currentFooterIndex = index;
-                });
+                currentFooterIndex = index;
               },
               links: footerLinks,
             ),
@@ -160,30 +163,27 @@ class HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Function to build the carousel with dots and linking
+  // Function to launch URLs
+  Future<void> _launchURL(String url) async {}
+
+  // Build carousel with dots
   Widget _buildCarouselWithDots({
     required List<String> images,
     required int currentIndex,
     required CarouselSliderController carouselController,
     required Function(int) onPageChanged,
-    required List<String> links, // Link associated with each image
+    required List<String> links,
   }) {
     return Column(
       children: [
         CarouselSlider(
-          items: images
-              .asMap()
-              .entries
-              .map((entry) => InkWell(
-                    onTap: () => _launchURL(
-                        links[entry.key]), // Open link when banner is clicked
-                    child: Image.asset(
-                      entry.value,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                    ),
-                  ))
-              .toList(),
+          items: images.asMap().entries.map((entry) {
+            return InkWell(
+              onTap: () => _launchURL(links[entry.key]),
+              child: Image.asset(entry.value,
+                  fit: BoxFit.cover, width: double.infinity),
+            );
+          }).toList(),
           carouselController: carouselController,
           options: CarouselOptions(
             height: 150,
@@ -211,10 +211,8 @@ class HomeScreenState extends State<HomeScreen> {
                     const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: (currentIndex == entry.key
-                      ? Colors.black
-                      : Colors
-                          .grey), // Color changes based on the current index
+                  color:
+                      (currentIndex == entry.key ? Colors.black : Colors.grey),
                 ),
               ),
             );
@@ -224,7 +222,8 @@ class HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildGridItem(String title, IconData icon) {
+  // Grid item builder
+  Widget _buildGridItem(String title, IconData icon, BuildContext context) {
     return GestureDetector(
       onTap: () {
         ScaffoldMessenger.of(context)
@@ -235,17 +234,54 @@ class HomeScreenState extends State<HomeScreen> {
         children: [
           Icon(icon, size: 40, color: Colors.green),
           const SizedBox(height: 5),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 12),
-          ),
+          Text(title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 12)),
         ],
       ),
     );
   }
 
-  Future<void> _launchURL(String url) async {
-    // Handle URL launching
+  // Login dialog
+  Future<void> _showLoginDialog(
+      BuildContext context, AuthNotifier authNotifier) async {
+    String username = '';
+    String password = '';
+
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Login'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              TextField(
+                onChanged: (value) {
+                  username = value;
+                },
+                decoration: const InputDecoration(labelText: 'Username'),
+              ),
+              TextField(
+                onChanged: (value) {
+                  password = value;
+                },
+                decoration: const InputDecoration(labelText: 'Password'),
+                obscureText: true,
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                authNotifier.login(username, password);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Login'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

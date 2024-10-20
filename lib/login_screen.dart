@@ -68,7 +68,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'Welcome to ANGT Health Management System',
+                    'Welcome to ANGT Hospital Management System',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 24,
@@ -86,12 +86,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     child: TextField(
                       controller: _usernameController,
                       decoration: const InputDecoration(
-                        labelText: 'Mobile Number',
+                        labelText: 'Username',
                         prefixIcon: Icon(Icons.phone),
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.all(16.0),
                       ),
-                      keyboardType: TextInputType.phone,
                     ),
                   ),
                   const SizedBox(height: 20),
