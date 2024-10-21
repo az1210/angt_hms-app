@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'auth_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+// ignore: must_be_immutable
 class HomeScreen extends ConsumerWidget {
   final CarouselSliderController _carouselController =
       CarouselSliderController();
@@ -19,7 +21,6 @@ class HomeScreen extends ConsumerWidget {
     final authState = ref.watch(authProvider);
     final authNotifier = ref.read(authProvider.notifier);
 
-    // List of promotional and footer banners
     final List<String> promoBanners = [
       'assets/images/ace.jpg',
       'assets/images/Axlovir.jpg',
@@ -32,7 +33,6 @@ class HomeScreen extends ConsumerWidget {
       'assets/images/DIBENOL.jpg',
     ];
 
-    // Promotional and footer URLs
     final List<String> promoLinks = [
       'https://promo-site-1.com',
       'https://promo-site-2.com',
@@ -87,7 +87,6 @@ class HomeScreen extends ConsumerWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Promotional Banner with Carousel
             _buildCarouselWithDots(
               images: promoBanners,
               currentIndex: currentPromoIndex,
@@ -147,7 +146,6 @@ class HomeScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            // Footer Banner with Carousel
             _buildCarouselWithDots(
               images: footerBanners,
               currentIndex: currentFooterIndex,
@@ -163,10 +161,12 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  // Function to launch URLs
-  Future<void> _launchURL(String url) async {}
+  Future<void> _launchURL(String url) async {
+    if (!await launchUrl(url as Uri)) {
+      throw Exception('Could not launch $url');
+    }
+  }
 
-  // Build carousel with dots
   Widget _buildCarouselWithDots({
     required List<String> images,
     required int currentIndex,
@@ -222,7 +222,6 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  // Grid item builder
   Widget _buildGridItem(String title, IconData icon, BuildContext context) {
     return GestureDetector(
       onTap: () {
@@ -242,7 +241,6 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  // Login dialog
   Future<void> _showLoginDialog(
       BuildContext context, AuthNotifier authNotifier) async {
     String username = '';
