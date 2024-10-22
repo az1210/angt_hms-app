@@ -4,27 +4,27 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'auth_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-// ignore: must_be_immutable
-class HomeScreen extends ConsumerWidget {
-  final CarouselSliderController _carouselController =
-      CarouselSliderController();
-  final CarouselSliderController _footerCarouselController =
-      CarouselSliderController();
+final promoIndexProvider = StateProvider<int>((ref) => 0);
+final footerIndexProvider = StateProvider<int>((ref) => 0);
 
-  int currentPromoIndex = 0;
-  int currentFooterIndex = 0;
+class HomeScreen extends ConsumerWidget {
+  final CarouselSliderController _carouselController = CarouselSliderController();
+  final CarouselSliderController _footerCarouselController = CarouselSliderController();
 
   HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentPromoIndex = ref.watch(promoIndexProvider);
+    final currentFooterIndex = ref.watch(footerIndexProvider);
+
     final authState = ref.watch(authProvider);
     final authNotifier = ref.read(authProvider.notifier);
 
     final List<String> promoBanners = [
       'assets/images/ace.jpg',
       'assets/images/Axlovir.jpg',
-      'assets/images/Bevicort.jpg',
+      'assets/images/Bevicort.jpg'
     ];
 
     final List<String> footerBanners = [
@@ -34,10 +34,11 @@ class HomeScreen extends ConsumerWidget {
     ];
 
     final List<String> promoLinks = [
-      'https://promo-site-1.com',
+      'https://www.google.com',
       'https://promo-site-2.com',
       'https://promo-site-3.com',
     ];
+
     final List<String> footerLinks = [
       'https://footer-site-1.com',
       'https://footer-site-2.com',
@@ -62,9 +63,9 @@ class HomeScreen extends ConsumerWidget {
           children: <Widget>[
             UserAccountsDrawerHeader(
               accountName:
-                  Text(authState.isAuthenticated ? 'Logged in' : 'Guest'),
+              Text(authState.isAuthenticated ? 'Logged in' : 'Guest'),
               accountEmail:
-                  Text(authState.isAuthenticated ? 'Welcome' : 'Please Login'),
+              Text(authState.isAuthenticated ? 'Welcome' : 'Please Login'),
               currentAccountPicture: const CircleAvatar(
                 backgroundColor: Colors.white,
                 child: Icon(Icons.person, size: 50, color: Colors.green),
@@ -92,7 +93,7 @@ class HomeScreen extends ConsumerWidget {
               currentIndex: currentPromoIndex,
               carouselController: _carouselController,
               onPageChanged: (index) {
-                currentPromoIndex = index;
+                ref.read(promoIndexProvider.notifier).state = index;
               },
               links: promoLinks,
             ),
@@ -100,6 +101,7 @@ class HomeScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(10),
               child: GridView.count(
                 shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 crossAxisCount: 4,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
@@ -129,6 +131,7 @@ class HomeScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(10),
               child: GridView.count(
                 shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 crossAxisCount: 4,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
@@ -146,12 +149,13 @@ class HomeScreen extends ConsumerWidget {
                 ],
               ),
             ),
+            // Footer Carousel with Dots
             _buildCarouselWithDots(
               images: footerBanners,
               currentIndex: currentFooterIndex,
               carouselController: _footerCarouselController,
               onPageChanged: (index) {
-                currentFooterIndex = index;
+                ref.read(footerIndexProvider.notifier).state = index;
               },
               links: footerLinks,
             ),
@@ -159,12 +163,6 @@ class HomeScreen extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  Future<void> _launchURL(String url) async {
-    if (!await launchUrl(url as Uri)) {
-      throw Exception('Could not launch $url');
-    }
   }
 
   Widget _buildCarouselWithDots({
@@ -177,19 +175,26 @@ class HomeScreen extends ConsumerWidget {
     return Column(
       children: [
         CarouselSlider(
-          items: images.asMap().entries.map((entry) {
-            return InkWell(
-              onTap: () => _launchURL(links[entry.key]),
-              child: Image.asset(entry.value,
-                  fit: BoxFit.cover, width: double.infinity),
+          items: images.map((imagePath) {
+            return GestureDetector(
+              onTap: () async {
+                final url = links[images.indexOf(imagePath)];
+                if (await canLaunch(url)) {
+                  await launch(url);
+                }
+              },
+              child: Image.asset(
+                imagePath,
+                fit: BoxFit.cover,
+                width: double.infinity,
+              ),
             );
           }).toList(),
           carouselController: carouselController,
           options: CarouselOptions(
-            height: 150,
             autoPlay: true,
-            autoPlayInterval: const Duration(seconds: 8),
-            autoPlayAnimationDuration: const Duration(milliseconds: 800),
+            enlargeCenterPage: true,
+            aspectRatio: 2.0,
             onPageChanged: (index, reason) {
               onPageChanged(index);
             },
@@ -198,46 +203,23 @@ class HomeScreen extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: images.asMap().entries.map((entry) {
-            return InkWell(
-              onTap: () {
-                carouselController.animateToPage(entry.key,
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.linear);
-              },
+            return GestureDetector(
+              onTap: () => carouselController.animateToPage(entry.key),
               child: Container(
                 width: 12.0,
                 height: 12.0,
-                margin:
-                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+                margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color:
-                      (currentIndex == entry.key ? Colors.black : Colors.grey),
+                  color: currentIndex == entry.key
+                      ? Colors.black
+                      : Colors.black.withOpacity(0.3),
                 ),
               ),
             );
           }).toList(),
         ),
       ],
-    );
-  }
-
-  Widget _buildGridItem(String title, IconData icon, BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Clicked on $title')));
-      },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 40, color: Colors.green),
-          const SizedBox(height: 5),
-          Text(title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12)),
-        ],
-      ),
     );
   }
 
@@ -258,28 +240,56 @@ class HomeScreen extends ConsumerWidget {
                 onChanged: (value) {
                   username = value;
                 },
-                decoration: const InputDecoration(labelText: 'Username'),
+                decoration: const InputDecoration(
+                  hintText: 'Username',
+                ),
               ),
               TextField(
                 onChanged: (value) {
                   password = value;
                 },
-                decoration: const InputDecoration(labelText: 'Password'),
+                decoration: const InputDecoration(
+                  hintText: 'Password',
+                ),
                 obscureText: true,
               ),
             ],
           ),
           actions: <Widget>[
             TextButton(
+              child: const Text('Cancel'),
               onPressed: () {
-                authNotifier.login(username, password);
                 Navigator.of(context).pop();
               },
+            ),
+            TextButton(
               child: const Text('Login'),
+              onPressed: () async {
+                await authNotifier.login(username, password);
+                Navigator.of(context).pop();
+              },
             ),
           ],
         );
       },
+    );
+  }
+
+  Widget _buildGridItem(String title, IconData icon, BuildContext context) {
+    return GestureDetector(
+      onTap: (){},
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon,size: 40,color: Colors.green,),
+          const SizedBox(height: 5),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 12),
+          ),
+        ],
+      ),
     );
   }
 }
