@@ -4,6 +4,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'auth_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import './services_screen/search_doctor.dart';
+import './services_screen/follow_up.dart';
+
 final promoIndexProvider = StateProvider<int>((ref) => 0);
 final footerIndexProvider = StateProvider<int>((ref) => 0);
 
@@ -97,58 +100,56 @@ class HomeScreen extends ConsumerWidget {
               },
               links: promoLinks,
             ),
+            
             Padding(
-              padding: const EdgeInsets.all(10),
-              child: GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 4,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                children: [
-                  _buildGridItem('ডাক্তার খুঁজুন', Icons.search, context),
-                  _buildGridItem('ফলোআপ', Icons.update, context),
-                  _buildGridItem(
-                      'অ্যাপয়েন্টমেন্ট', Icons.calendar_today, context),
-                  _buildGridItem('প্রেসক্রিপশন', Icons.medication, context),
-                  _buildGridItem('আমার ডাক্তার', Icons.person, context),
-                  _buildGridItem(
-                      'হেলথ চেক-আপ', Icons.health_and_safety, context),
-                  _buildGridItem('হোম টেস্ট', Icons.home, context),
-                  _buildGridItem('ইন্স্যুরেন্স', Icons.shield, context),
-                ],
-              ),
+            padding: const EdgeInsets.all(10),
+            child: GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 4,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              children: [
+                _buildGridItem('ডাক্তার খুঁজুন', Icons.search, context, const SearchDoctorScreen()),
+                _buildGridItem('ফলোআপ', Icons.update, context, const FollowUpScreen()),
+                _buildGridItem('অ্যাপয়েন্টমেন্ট', Icons.calendar_today, context, const AppointmentScreen()),
+                _buildGridItem('প্রেসক্রিপশন', Icons.medication, context, const PlaceholderScreen('Prescription')),
+                _buildGridItem('আমার ডাক্তার', Icons.person, context, const PlaceholderScreen('My Doctor')),
+                _buildGridItem('হেলথ চেক-আপ', Icons.health_and_safety, context, const PlaceholderScreen('Health Check-Up')),
+                _buildGridItem('হোম টেস্ট', Icons.home, context, const PlaceholderScreen('Home Test')),
+                _buildGridItem('ইন্স্যুরেন্স', Icons.shield, context, const PlaceholderScreen('Insurance')),
+              ],
             ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              alignment: Alignment.centerLeft,
-              child: const Text(
-                'জনপ্রিয় সার্চ',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(10),
+            alignment: Alignment.centerLeft,
+            child: const Text(
+              'জনপ্রিয় সার্চ',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 4,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                children: [
-                  _buildGridItem(
-                      'জেনারেল প্র্যাকটিস...', Icons.local_hospital, context),
-                  _buildGridItem('জন্ডিস, হেপাটাইট...', Icons.person, context),
-                  _buildGridItem(
-                      'স্ত্রী ও প্রসূতি', Icons.pregnant_woman, context),
-                  _buildGridItem('অর্থোপেডিক', Icons.healing, context),
-                  _buildGridItem('ডায়াবেটোলজি', Icons.bloodtype, context),
-                  _buildGridItem('খাদ্য ও পুষ্টি', Icons.food_bank, context),
-                  _buildGridItem('নাক, কান ও গলা', Icons.person_2, context),
-                  _buildGridItem('হৃদরোগ', Icons.favorite, context),
-                ],
-              ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 4,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              children: [
+                _buildGridItem('জেনারেল প্র্যাকটিস...', Icons.local_hospital, context, const PlaceholderScreen('General Practice')),
+                _buildGridItem('জন্ডিস, হেপাটাইট...', Icons.person, context, const PlaceholderScreen('Jaundice, Hepatitis')),
+                _buildGridItem('স্ত্রী ও প্রসূতি', Icons.pregnant_woman, context, const PlaceholderScreen('Gynecology')),
+                _buildGridItem('অর্থোপেডিক', Icons.healing, context, const PlaceholderScreen('Orthopedics')),
+                _buildGridItem('ডায়াবেটোলজি', Icons.bloodtype, context, const PlaceholderScreen('Diabetology')),
+                _buildGridItem('খাদ্য ও পুষ্টি', Icons.food_bank, context, const PlaceholderScreen('Food and Nutrition')),
+                _buildGridItem('নাক, কান ও গলা', Icons.person_2, context, const PlaceholderScreen('ENT')),
+                _buildGridItem('হৃদরোগ', Icons.favorite, context, const PlaceholderScreen('Cardiology')),
+              ],
             ),
+          ),
+            const SizedBox(height: 30,),
             // Footer Carousel with Dots
             _buildCarouselWithDots(
               images: footerBanners,
@@ -275,9 +276,14 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildGridItem(String title, IconData icon, BuildContext context) {
+  Widget _buildGridItem(String title, IconData icon, BuildContext context, Widget screen) {
     return GestureDetector(
-      onTap: (){},
+      onTap: (){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => screen),
+        );
+      },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
