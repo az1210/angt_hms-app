@@ -6,6 +6,20 @@ import 'package:url_launcher/url_launcher.dart';
 
 import './services_screen/search_doctor.dart';
 import './services_screen/follow_up.dart';
+import './services_screen/appointment.dart';
+import './services_screen/home_test.dart';
+import './services_screen/insurance.dart';
+import './services_screen/my_doctor.dart';
+import './services_screen/prescription.dart';
+import './services_screen/cardiology.dart';
+import './services_screen/diabetology.dart';
+import './services_screen/ent.dart';
+import './services_screen/food_nutrition.dart';
+import './services_screen/general_practice.dart';
+import './services_screen/gynecology.dart';
+import './services_screen/health_check.dart';
+import './services_screen/jaundice.dart';
+import './services_screen/orthopedics.dart';
 
 final promoIndexProvider = StateProvider<int>((ref) => 0);
 final footerIndexProvider = StateProvider<int>((ref) => 0);
@@ -113,11 +127,11 @@ class HomeScreen extends ConsumerWidget {
                 _buildGridItem('ডাক্তার খুঁজুন', Icons.search, context, const SearchDoctorScreen()),
                 _buildGridItem('ফলোআপ', Icons.update, context, const FollowUpScreen()),
                 _buildGridItem('অ্যাপয়েন্টমেন্ট', Icons.calendar_today, context, const AppointmentScreen()),
-                _buildGridItem('প্রেসক্রিপশন', Icons.medication, context, const PlaceholderScreen('Prescription')),
-                _buildGridItem('আমার ডাক্তার', Icons.person, context, const PlaceholderScreen('My Doctor')),
-                _buildGridItem('হেলথ চেক-আপ', Icons.health_and_safety, context, const PlaceholderScreen('Health Check-Up')),
-                _buildGridItem('হোম টেস্ট', Icons.home, context, const PlaceholderScreen('Home Test')),
-                _buildGridItem('ইন্স্যুরেন্স', Icons.shield, context, const PlaceholderScreen('Insurance')),
+                _buildGridItem('প্রেসক্রিপশন', Icons.medication, context, const Prescription()),
+                _buildGridItem('আমার ডাক্তার', Icons.person, context, const MyDoctor()),
+                _buildGridItem('হেলথ চেক-আপ', Icons.health_and_safety, context, const HealthCheckUpScreen()),
+                _buildGridItem('হোম টেস্ট', Icons.home, context, const HomeTestScreen()),
+                _buildGridItem('ইন্স্যুরেন্স', Icons.shield, context, const InsuranceScreen()),
               ],
             ),
           ),
@@ -138,14 +152,14 @@ class HomeScreen extends ConsumerWidget {
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
               children: [
-                _buildGridItem('জেনারেল প্র্যাকটিস...', Icons.local_hospital, context, const PlaceholderScreen('General Practice')),
-                _buildGridItem('জন্ডিস, হেপাটাইট...', Icons.person, context, const PlaceholderScreen('Jaundice, Hepatitis')),
-                _buildGridItem('স্ত্রী ও প্রসূতি', Icons.pregnant_woman, context, const PlaceholderScreen('Gynecology')),
-                _buildGridItem('অর্থোপেডিক', Icons.healing, context, const PlaceholderScreen('Orthopedics')),
-                _buildGridItem('ডায়াবেটোলজি', Icons.bloodtype, context, const PlaceholderScreen('Diabetology')),
-                _buildGridItem('খাদ্য ও পুষ্টি', Icons.food_bank, context, const PlaceholderScreen('Food and Nutrition')),
-                _buildGridItem('নাক, কান ও গলা', Icons.person_2, context, const PlaceholderScreen('ENT')),
-                _buildGridItem('হৃদরোগ', Icons.favorite, context, const PlaceholderScreen('Cardiology')),
+                _buildGridItem('জেনারেল প্র্যাকটিস...', Icons.local_hospital, context, const GeneralPracticeScreen()),
+                _buildGridItem('জন্ডিস, হেপাটাইট...', Icons.person, context, const JaundiceScreen()),
+                _buildGridItem('স্ত্রী ও প্রসূতি', Icons.pregnant_woman, context, const GynecologyScreen()),
+                _buildGridItem('অর্থোপেডিক', Icons.healing, context, const OrthopedicsScreen()),
+                _buildGridItem('ডায়াবেটোলজি', Icons.bloodtype, context, const DiabetologyScreen()),
+                _buildGridItem('খাদ্য ও পুষ্টি', Icons.food_bank, context, const FoodNutritionScreen()),
+                _buildGridItem('নাক, কান ও গলা', Icons.person_2, context, const EntScreen()),
+                _buildGridItem('হৃদরোগ', Icons.favorite, context, const CardiologyScreen()),
               ],
             ),
           ),
