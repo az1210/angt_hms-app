@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import './auth_provider.dart';
+import 'provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -22,20 +22,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Background design with gradient
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Color(0xFF6EC1E4), // Light blue at the top
-                  Color(0xFFB2E7F8), // Lighter blue shade
+                  Color(0xFF6EC1E4),
+                  Color(0xFFB2E7F8),
                 ],
               ),
             ),
           ),
-          // Overlay some medical icons or transparent shapes if needed
           Positioned(
             top: -50,
             left: -50,
@@ -60,7 +58,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
             ),
           ),
-          // Content on top of the background
           Center(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -77,7 +74,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  // Username text field
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.8),
@@ -94,7 +90,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  // Password text field
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.8),
@@ -112,7 +107,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  // Login button
                   ElevatedButton(
                     onPressed: () async {
                       await authNotifier.login(
@@ -132,7 +126,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     child: const Text('Login'),
                   ),
-                  // Error message if login fails
                   if (authState.error != null)
                     Padding(
                       padding: const EdgeInsets.all(8.0),
