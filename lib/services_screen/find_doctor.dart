@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class FindDoctorScreen extends StatefulWidget {
-  const FindDoctorScreen({super.key});
+  const FindDoctorScreen({Key? key}) : super(key: key);
 
   @override
   _FindDoctorScreenState createState() => _FindDoctorScreenState();
@@ -35,11 +35,20 @@ class _FindDoctorScreenState extends State<FindDoctorScreen> {
     // Add more doctor data here as needed
   ];
 
-  final List<String> specialties = [
-    "Otolaryngology, Specialist GP",
-    "General Physician, Medicine",
-    "Ear, Nose and Throat (ENT)",
-    // Add more specialties as needed
+  final List<Map<String, dynamic>> specialties = [
+    {"name": "মানসিক রোগ", "icon": Icons.psychology},
+    {"name": "সার্জারি", "icon": Icons.health_and_safety},
+    {"name": "ফিজিক্যাল মেডিসিন", "icon": Icons.fitness_center},
+    {"name": "ফিজিওথেরাপি", "icon": Icons.accessibility_new},
+    {"name": "নিউরো মেডিসিন", "icon": Icons.medical_services},
+    {"name": "কার্ডিওলজি", "icon": Icons.favorite},
+    {"name": "অর্থোপেডিক", "icon": Icons.accessible},
+    {"name": "নেফ্রোলজি", "icon": Icons.local_hospital},
+    {"name": "ডার্মাটোলজি", "icon": Icons.face},
+    {"name": "গাইনোকোলজি", "icon": Icons.female},
+    {"name": "পেডিয়াট্রিক", "icon": Icons.child_care},
+    {"name": "ডেন্টাল", "icon": Icons.medical_services},
+    // Add more specialties if needed
   ];
 
   List<Map<String, String>> get filteredDoctors {
@@ -57,37 +66,67 @@ class _FindDoctorScreenState extends State<FindDoctorScreen> {
     }).toList();
   }
 
-  void openSpecialtyFilterModal() {
-    showModalBottomSheet(
+  void openSpecialtyFilterDialog() {
+    showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Column(
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                "স্পেশালিটি বেছে নিন",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: specialties.length,
-                itemBuilder: (context, index) {
-                  final specialty = specialties[index];
-                  return ListTile(
-                    title: Text(specialty),
-                    onTap: () {
-                      setState(() {
-                        selectedSpecialty = specialty;
-                      });
-                      Navigator.pop(context);
+        return Dialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            constraints: const BoxConstraints(maxHeight: 500, maxWidth: 350),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "স্পেশালিটি বেছে নিন",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.green),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+                const Divider(),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: specialties.length,
+                    itemBuilder: (context, index) {
+                      final specialty = specialties[index];
+                      return Column(
+                        children: [
+                          ListTile(
+                            leading:
+                                Icon(specialty["icon"], color: Colors.green),
+                            title: Text(
+                              specialty["name"],
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            onTap: () {
+                              setState(() {
+                                selectedSpecialty = specialty["name"];
+                              });
+                              Navigator.pop(context);
+                            },
+                          ),
+                          if (index < specialties.length - 1) const Divider(),
+                        ],
+                      );
                     },
-                  );
-                },
-              ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );
@@ -121,7 +160,7 @@ class _FindDoctorScreenState extends State<FindDoctorScreen> {
                 ),
                 IconButton(
                   icon: const Icon(Icons.filter_list),
-                  onPressed: openSpecialtyFilterModal,
+                  onPressed: openSpecialtyFilterDialog,
                 ),
               ],
             ),
@@ -147,9 +186,9 @@ class _FindDoctorScreenState extends State<FindDoctorScreen> {
                   final doctor = filteredDoctors[index];
                   return Card(
                     child: ListTile(
-                      leading: const CircleAvatar(
+                      leading: CircleAvatar(
                         backgroundColor: Colors.green,
-                        child: Icon(Icons.person, color: Colors.white),
+                        child: const Icon(Icons.person, color: Colors.white),
                       ),
                       title: Text(doctor["name"]!),
                       subtitle: Column(
