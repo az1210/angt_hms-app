@@ -67,6 +67,9 @@ class _FindDoctorScreenState extends State<FindDoctorScreen> {
   }
 
   void openSpecialtyFilterDialog() {
+    double deviceHeight = MediaQuery.of(context).size.height;
+    double deviceWidth = MediaQuery.of(context).size.width;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -75,7 +78,8 @@ class _FindDoctorScreenState extends State<FindDoctorScreen> {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: Container(
             padding: const EdgeInsets.all(16),
-            constraints: const BoxConstraints(maxHeight: 500, maxWidth: 350),
+            constraints: BoxConstraints(
+                maxHeight: deviceHeight * 0.75, maxWidth: deviceWidth * 0.75),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
