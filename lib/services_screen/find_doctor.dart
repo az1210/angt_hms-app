@@ -36,18 +36,19 @@ class _FindDoctorScreenState extends State<FindDoctorScreen> {
   ];
 
   final List<Map<String, dynamic>> specialties = [
-    {"name": "মানসিক রোগ", "icon": Icons.psychology},
-    {"name": "সার্জারি", "icon": Icons.health_and_safety},
-    {"name": "ফিজিক্যাল মেডিসিন", "icon": Icons.fitness_center},
-    {"name": "ফিজিওথেরাপি", "icon": Icons.accessibility_new},
-    {"name": "নিউরো মেডিসিন", "icon": Icons.medical_services},
-    {"name": "কার্ডিওলজি", "icon": Icons.favorite},
-    {"name": "অর্থোপেডিক", "icon": Icons.accessible},
-    {"name": "নেফ্রোলজি", "icon": Icons.local_hospital},
-    {"name": "ডার্মাটোলজি", "icon": Icons.face},
-    {"name": "গাইনোকোলজি", "icon": Icons.female},
-    {"name": "পেডিয়াট্রিক", "icon": Icons.child_care},
-    {"name": "ডেন্টাল", "icon": Icons.medical_services},
+    {"name": "Psychology", "icon": Icons.psychology},
+    {"name": "Surgery", "icon": Icons.health_and_safety},
+    {"name": "Physical Medicine", "icon": Icons.fitness_center},
+    {"name": "Physiotherapy", "icon": Icons.accessibility_new},
+    {"name": "Neuro Medicine", "icon": Icons.medical_services},
+    {"name": "Cardiology", "icon": Icons.favorite},
+    {"name": "Orthopedic", "icon": Icons.accessible},
+    {"name": "Nephrology", "icon": Icons.local_hospital},
+    {"name": "Darmatology", "icon": Icons.face},
+    {"name": "Gynocology", "icon": Icons.female},
+    {"name": "Pediatric", "icon": Icons.child_care},
+    {"name": "Dental", "icon": Icons.medical_services},
+    {"name": "Medicine", "icon": Icons.health_and_safety},
     // Add more specialties if needed
   ];
 
@@ -87,7 +88,7 @@ class _FindDoctorScreenState extends State<FindDoctorScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      "স্পেশালিটি বেছে নিন",
+                      "Find By Specialty",
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
@@ -140,80 +141,90 @@ class _FindDoctorScreenState extends State<FindDoctorScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("ডাক্তার খুঁজুন"),
+        title: const Text("Find Doctor"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    onChanged: (value) {
-                      setState(() {
-                        searchQuery = value;
-                      });
-                    },
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.search),
-                      hintText: "ডাক্তারের নাম / প্রতিষ্ঠানের নাম দিয়ে খুঁজুন",
-                      border: OutlineInputBorder(),
+      body: Container(
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      onChanged: (value) {
+                        setState(() {
+                          searchQuery = value;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.search),
+                        hintText: "Find By Doctor/ Organization Name",
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                   ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.filter_list),
-                  onPressed: openSpecialtyFilterDialog,
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                const Text("টেলিমেডিসিন"),
-                Switch(
-                  value: telemedicineToggle,
-                  onChanged: (value) {
-                    setState(() {
-                      telemedicineToggle = value;
-                    });
+                  IconButton(
+                    icon: const Icon(Icons.filter_list),
+                    onPressed: openSpecialtyFilterDialog,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  const Text(
+                    "Telemedicine",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Switch(
+                    value: telemedicineToggle,
+                    onChanged: (value) {
+                      setState(() {
+                        telemedicineToggle = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: filteredDoctors.length,
+                  itemBuilder: (context, index) {
+                    final doctor = filteredDoctors[index];
+                    return Card(
+                      elevation: 5,
+                      child: ListTile(
+                        leading: const CircleAvatar(
+                          backgroundColor: Colors.green,
+                          child: Icon(Icons.person, color: Colors.white),
+                        ),
+                        title: Text(doctor["name"]!),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(doctor["qualification"]!),
+                            Text("Specialty: ${doctor["specialty"]!}"),
+                            if (doctor["organization"] != null &&
+                                doctor["organization"]!.isNotEmpty)
+                              Text("Organization: ${doctor["organization"]!}"),
+                          ],
+                        ),
+                        trailing: telemedicineToggle
+                            ? const Icon(Icons.video_call)
+                            : null,
+                      ),
+                    );
                   },
                 ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: ListView.builder(
-                itemCount: filteredDoctors.length,
-                itemBuilder: (context, index) {
-                  final doctor = filteredDoctors[index];
-                  return Card(
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.green,
-                        child: const Icon(Icons.person, color: Colors.white),
-                      ),
-                      title: Text(doctor["name"]!),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(doctor["qualification"]!),
-                          Text("বিশেষজ্ঞ: ${doctor["specialty"]!}"),
-                          if (doctor["organization"] != null &&
-                              doctor["organization"]!.isNotEmpty)
-                            Text("কর্মস্থল: ${doctor["organization"]!}"),
-                        ],
-                      ),
-                      trailing: telemedicineToggle
-                          ? const Icon(Icons.video_call)
-                          : null,
-                    ),
-                  );
-                },
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

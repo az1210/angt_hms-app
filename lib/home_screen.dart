@@ -42,7 +42,7 @@ class HomeScreen extends ConsumerWidget {
 
     final List<String> promoBanners = [
       'assets/images/ace.jpg',
-      'assets/images/Axlovir.jpg',
+      'assets/images/Bufocort.jpg',
       'assets/images/Bevicort.jpg'
     ];
 
@@ -67,14 +67,14 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('ANGT HMS'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(Icons.menu),
+        //     onPressed: () {
+        //       Scaffold.of(context).openDrawer();
+        //     },
+        //   ),
+        // ],
       ),
       drawer: Drawer(
         child: ListView(
@@ -105,96 +105,97 @@ class HomeScreen extends ConsumerWidget {
         ),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildCarouselWithDots(
-              images: promoBanners,
-              currentIndex: currentPromoIndex,
-              carouselController: _carouselController,
-              onPageChanged: (index) {
-                ref.read(promoIndexProvider.notifier).state = index;
-              },
-              links: promoLinks,
-            ),
-
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 4,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                children: [
-                  _buildGridItem('ডাক্তার খুঁজুন', Icons.search, context,
-                      const FindDoctorScreen()),
-                  _buildGridItem(
-                      'ফলোআপ', Icons.update, context, const FollowUpScreen()),
-                  _buildGridItem('অ্যাপয়েন্টমেন্ট', Icons.calendar_today,
-                      context, const AppointmentScreen()),
-                  _buildGridItem('প্রেসক্রিপশন', Icons.medication, context,
-                      const Prescription()),
-                  _buildGridItem(
-                      'আমার ডাক্তার', Icons.person, context, const MyDoctor()),
-                  _buildGridItem('হেলথ চেক-আপ', Icons.health_and_safety,
-                      context, const HealthCheckUpScreen()),
-                  _buildGridItem(
-                      'হোম টেস্ট', Icons.home, context, const HomeTestScreen()),
-                  _buildGridItem('ইন্স্যুরেন্স', Icons.shield, context,
-                      const InsuranceScreen()),
-                ],
+        child: Container(
+          color: Colors.white,
+          child: Column(
+            children: [
+              _buildCarouselWithDots(
+                images: promoBanners,
+                currentIndex: currentPromoIndex,
+                carouselController: _carouselController,
+                onPageChanged: (index) {
+                  ref.read(promoIndexProvider.notifier).state = index;
+                },
+                links: promoLinks,
               ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              alignment: Alignment.centerLeft,
-              child: const Text(
-                'জনপ্রিয় সার্চ',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 4,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  children: [
+                    _buildGridItem('Find Doctor', Icons.search, context,
+                        const FindDoctorScreen()),
+                    _buildGridItem('Follow-up', Icons.update, context,
+                        const FollowUpScreen()),
+                    _buildGridItem('Appointment', Icons.calendar_today, context,
+                        const AppointmentScreen()),
+                    _buildGridItem('Prescription', Icons.medication, context,
+                        const Prescription()),
+                    _buildGridItem(
+                        'My Doctor', Icons.person, context, const MyDoctor()),
+                    _buildGridItem('Health Check-up', Icons.health_and_safety,
+                        context, const HealthCheckUpScreen()),
+                    _buildGridItem('Home Test', Icons.home, context,
+                        const HomeTestScreen()),
+                    _buildGridItem('Insurance', Icons.shield, context,
+                        const InsuranceScreen()),
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 4,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                children: [
-                  _buildGridItem('জেনারেল প্র্যাকটিস...', Icons.local_hospital,
-                      context, const GeneralPracticeScreen()),
-                  _buildGridItem('জন্ডিস, হেপাটাইট...', Icons.person, context,
-                      const JaundiceScreen()),
-                  _buildGridItem('স্ত্রী ও প্রসূতি', Icons.pregnant_woman,
-                      context, const GynecologyScreen()),
-                  _buildGridItem('অর্থোপেডিক', Icons.healing, context,
-                      const OrthopedicsScreen()),
-                  _buildGridItem('ডায়াবেটোলজি', Icons.bloodtype, context,
-                      const DiabetologyScreen()),
-                  _buildGridItem('খাদ্য ও পুষ্টি', Icons.food_bank, context,
-                      const FoodNutritionScreen()),
-                  _buildGridItem('নাক, কান ও গলা', Icons.person_2, context,
-                      const EntScreen()),
-                  _buildGridItem('হৃদরোগ', Icons.favorite, context,
-                      const CardiologyScreen()),
-                ],
+              Container(
+                padding: const EdgeInsets.all(10),
+                alignment: Alignment.centerLeft,
+                child: const Text(
+                  'Popular Search',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            // Footer Carousel with Dots
-            _buildCarouselWithDots(
-              images: footerBanners,
-              currentIndex: currentFooterIndex,
-              carouselController: _footerCarouselController,
-              onPageChanged: (index) {
-                ref.read(footerIndexProvider.notifier).state = index;
-              },
-              links: footerLinks,
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 4,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  children: [
+                    _buildGridItem('General Practice', Icons.local_hospital,
+                        context, const GeneralPracticeScreen()),
+                    _buildGridItem('Jaundice, Hepatitis', Icons.person, context,
+                        const JaundiceScreen()),
+                    _buildGridItem('Maternal', Icons.pregnant_woman, context,
+                        const GynecologyScreen()),
+                    _buildGridItem('Orthopedic', Icons.healing, context,
+                        const OrthopedicsScreen()),
+                    _buildGridItem('Diabetology', Icons.bloodtype, context,
+                        const DiabetologyScreen()),
+                    _buildGridItem('Food & Nutrition', Icons.food_bank, context,
+                        const FoodNutritionScreen()),
+                    _buildGridItem(
+                        'ENT', Icons.person_2, context, const EntScreen()),
+                    _buildGridItem('Heart Disease', Icons.favorite, context,
+                        const CardiologyScreen()),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              _buildCarouselWithDots(
+                images: footerBanners,
+                currentIndex: currentFooterIndex,
+                carouselController: _footerCarouselController,
+                onPageChanged: (index) {
+                  ref.read(footerIndexProvider.notifier).state = index;
+                },
+                links: footerLinks,
+              ),
+            ],
+          ),
         ),
       ),
     );
