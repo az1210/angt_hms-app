@@ -9,12 +9,16 @@ class AuthState {
   final String? token;
   final String? error;
   final List<dynamic>? users;
+  final List<dynamic>? filteredUsers;
+  final List<String>? specialties;
 
   AuthState({
     this.isAuthenticated = false,
     this.token,
     this.error,
     this.users,
+    this.filteredUsers,
+    this.specialties,
   });
 
   AuthState copyWith({
@@ -22,12 +26,16 @@ class AuthState {
     String? token,
     String? error,
     List<dynamic>? users,
+    List<dynamic>? filteredUsers,
+    List<String>? specialties,
   }) {
     return AuthState(
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
       token: token ?? this.token,
       error: error ?? this.error,
       users: users ?? this.users,
+      filteredUsers: filteredUsers ?? this.filteredUsers,
+      specialties: specialties ?? this.specialties,
     );
   }
 }
@@ -67,23 +75,22 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> fetchAllUsers() async {
-    if (state.token == null) {
-      state = state.copyWith(error: 'User is not authenticated.');
-      return;
-    }
-
     try {
       final response = await _dio.get(
         'https://rxbackend.crp-carerapidpoint.com/api/auth/all-users',
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer ${state.token}',
-          },
-        ),
       );
 
       if (response.statusCode == 200) {
-        state = state.copyWith(users: response.data);
+        final specialties = (response.data as List<dynamic>)
+            .map((user) => user['speciality']?.toString() ?? '')
+            .toSet()
+            .toList();
+
+        state = state.copyWith(
+          users: response.data,
+          filteredUsers: response.data,
+          specialties: specialties,
+        );
       } else {
         state = state.copyWith(
           error: 'Failed to fetch users. Please try again later.',
@@ -94,6 +101,29 @@ class AuthNotifier extends StateNotifier<AuthState> {
         error: 'An error occurred while fetching users: $e',
       );
     }
+  }
+
+  void filterDoctors(String query, [String specialty = ""]) {
+    final users = state.users ?? [];
+
+    final filtered = users.where((user) {
+      final matchesQuery = query.isEmpty ||
+          (user['displayName'] ?? '')
+              .toLowerCase()
+              .contains(query.toLowerCase()) ||
+          (user['work_at'] ?? '').toLowerCase().contains(query.toLowerCase());
+
+      final matchesSpecialty =
+          specialty.isEmpty || (user['speciality'] ?? '') == specialty;
+
+      return matchesQuery && matchesSpecialty;
+    }).toList();
+
+    state = state.copyWith(filteredUsers: filtered);
+  }
+
+  void filterBySpecialty(String specialty) {
+    filterDoctors("", specialty);
   }
 
   void logout() {

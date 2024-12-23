@@ -32,19 +32,13 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/ace.jpg
-    - assets/images/Axlovir.jpg
-    - assets/images/Bevicort.jpg
-    - assets/images/BICOZIN.jpg
-    - assets/images/Bufocort.jpg
-    - assets/images/DIBENOL.jpg
-    - assets/images/DILTIZEM.jpg
-    - assets/images/Doxacil.jpg
+    - assets/images/
 
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

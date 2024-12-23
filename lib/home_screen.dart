@@ -20,6 +20,8 @@ import './services_screen/gynecology.dart';
 import './services_screen/health_check.dart';
 import './services_screen/jaundice.dart';
 import './services_screen/orthopedics.dart';
+import './patient/patient_info.dart';
+import './patient/clinical_data.dart';
 
 final promoIndexProvider = StateProvider<int>((ref) => 0);
 final footerIndexProvider = StateProvider<int>((ref) => 0);
@@ -136,13 +138,17 @@ class HomeScreen extends ConsumerWidget {
                     _buildGridItem('Prescription', Icons.medication, context,
                         const Prescription()),
                     _buildGridItem(
-                        'My Doctor', Icons.person, context, const MyDoctor()),
+                        'My Doctor', Icons.local_hospital_outlined, context, const MyDoctor()),
                     _buildGridItem('Health Check-up', Icons.health_and_safety,
                         context, const HealthCheckUpScreen()),
                     _buildGridItem('Home Test', Icons.home, context,
                         const HomeTestScreen()),
                     _buildGridItem('Insurance', Icons.shield, context,
                         const InsuranceScreen()),
+                    _buildGridItem('Patient Info', Icons.person, context,
+                        PatientProfileScreen()),
+                    _buildGridItem('EHR', Icons.edit_document, context,
+                        ElectronicHealthRecordScreen()),
                   ],
                 ),
               ),

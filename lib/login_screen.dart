@@ -82,28 +82,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     child: TextField(
                       controller: _usernameController,
                       decoration: const InputDecoration(
-                        labelText: 'Username',
+                        hintText: 'Enter your phone number',
+                        hintStyle: TextStyle(fontWeight: FontWeight.w300),
                         prefixIcon: Icon(Icons.phone),
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.all(16.0),
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.8),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: TextField(
-                      controller: _passwordController,
-                      decoration: const InputDecoration(
-                        labelText: 'Password',
-                        prefixIcon: Icon(Icons.lock),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.all(16.0),
-                      ),
-                      obscureText: true,
                     ),
                   ),
                   const SizedBox(height: 20),
